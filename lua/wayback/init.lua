@@ -43,7 +43,7 @@ local function validate(opts)
     file_path = opts.fargs[1]
   end
   if not file_path or file_path == "" then
-    file_path = vim.fn.expand("%:p")
+    file_path = vim.fn.expand("%")
   end
   if not file_path or file_path == "" then
     vim.notify("No file in current buffer", vim.log.levels.WARN)

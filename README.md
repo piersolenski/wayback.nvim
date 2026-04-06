@@ -173,7 +173,7 @@ Lines range from cool blue (rarely changed) to hot red (frequently changed). Cal
 
 ### File time-lapse
 
-Step through every version of the file chronologically:
+Step through every version of the file. Timelapse opens on the latest version; navigate backward and forward through history:
 
 ```lua
 require("wayback").timelapse()
