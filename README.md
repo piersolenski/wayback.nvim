@@ -7,21 +7,15 @@ Browse and open the current file at any previous commit, without detaching HEAD.
 - Open file at any commit in current buffer, split, vsplit, or tab
 - Preview file contents at the selected commit
 - Handles file renames/moves via `git log --follow`
-- Open file at commit in your web browser (GitHub, GitLab, Bitbucket, Azure DevOps)
+- Open file at commit in your web browser (supports GitHub, GitLab, Bitbucket, Azure DevOps)
 - Copy commit hash to clipboard
 - Auto-detects your installed picker, or configure explicitly
-- No vim-fugitive dependency
 
-## What is the difference between this and `git_bcommits`?
+### What is the difference between this and `git_bcommits`?
 
 - **Purpose**: Opens the file at a previous version without affecting your git state. `git_bcommits` checks out the entire repo.
 - **Moved files**: Handles renamed/moved files correctly.
 - **Preview**: Shows file contents at the commit, not the diff.
-
-## Dependencies
-
-- `git`
-- At least one picker: [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), [fzf-lua](https://github.com/ibhagwan/fzf-lua), or [snacks.nvim](https://github.com/folke/snacks.nvim)
 
 ## 🔩 Installation
 
