@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.lua')
+
+if [ -z "$files" ]; then
+  exit 0
+fi
+
+if command -v stylua &>/dev/null; then
+  echo "$files" | xargs stylua
+  echo "$files" | xargs git add
+else
+  echo "warning: stylua not found, skipping formatting"
+fi
+
+if command -v luacheck &>/dev/null; then
+  echo "$files" | xargs luacheck
+  if [ $? -ne 0 ]; then
+    echo "luacheck failed, aborting commit"
+    exit 1
+  fi
+else
+  echo "warning: luacheck not found, skipping lint"
+fi

@@ -3,10 +3,8 @@ local actions_mod = require("wayback.actions")
 
 local M = {}
 
-function M.open(opts, file_path)
+function M.open(_opts, file_path)
   local Snacks = require("snacks")
-
-  opts = opts or {}
 
   local commits = git.log(file_path)
   local items = {}
