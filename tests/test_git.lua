@@ -106,6 +106,52 @@ test("log with empty path does not error", function()
   assert(type(result) == "table", "should return a table")
 end)
 
+test("repo_relative_path returns relative path", function()
+  local abs = tmp_dir .. "/renamed.lua"
+  local rel = git.repo_relative_path(abs)
+  assert(rel == "renamed.lua", "expected 'renamed.lua', got: " .. tostring(rel))
+end)
+
+test("repo_relative_path passes through already-relative path", function()
+  local rel = git.repo_relative_path("some/file.lua")
+  assert(rel == "some/file.lua", "expected 'some/file.lua', got: " .. tostring(rel))
+end)
+
+test("log_range returns commits touching line 2", function()
+  local commits = git.log_range("renamed.lua", 2, 2)
+  assert(#commits >= 1, "expected at least 1 commit, got " .. #commits)
+  -- The modify commit touched line 2
+  local found = false
+  for _, c in ipairs(commits) do
+    if c.message and c.message:find("modify") then
+      found = true
+    end
+  end
+  assert(found, "should find the modify commit for line 2")
+end)
+
+test("log_range returns commits for a range", function()
+  local commits = git.log_range("renamed.lua", 1, 3)
+  assert(#commits >= 1, "expected at least 1 commit for range 1-3, got " .. #commits)
+end)
+
+test("log_range commits have required fields", function()
+  local commits = git.log_range("renamed.lua", 2, 2)
+  if #commits > 0 then
+    local c = commits[1]
+    assert(c.hash and #c.hash > 0, "hash should be present")
+    assert(c.date and #c.date > 0, "date should be present, got: " .. tostring(c.date))
+    assert(c.message and #c.message > 0, "message should be present")
+    assert(c.path and #c.path > 0, "path should be present")
+  end
+end)
+
+test("head_hash returns a valid hash", function()
+  local hash = git.head_hash()
+  assert(hash and #hash >= 7, "hash should be at least 7 chars, got: " .. tostring(hash))
+  assert(hash:match("^%x+$"), "hash should be hex, got: " .. tostring(hash))
+end)
+
 -- Cleanup
 vim.cmd("cd " .. original_dir)
 vim.fn.delete(tmp_dir, "rf")

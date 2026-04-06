@@ -6,6 +6,22 @@ local M = {}
 M.actions = require("wayback.actions")
 
 vim.api.nvim_set_hl(0, "WaybackDate", { default = true, link = "Number" })
+vim.api.nvim_set_hl(0, "WaybackTimelapse", { default = true, link = "Comment" })
+
+local function get_visual_range()
+  local mode = vim.api.nvim_get_mode().mode
+  local is_visual = mode:match("^[vV]") or mode == "\22"
+  if not is_visual then
+    return nil, nil
+  end
+  local start_line = vim.fn.getpos("v")[2]
+  local end_line = vim.fn.getcurpos()[2]
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "x", true)
+  return start_line, end_line
+end
 
 function M.setup(opts)
   config.setup(opts)
@@ -42,10 +58,11 @@ end
 local function resolve_picker()
   local picker_name = config.values.picker
   if picker_name == "auto" then
-    picker_name = detect_picker()
-    if not picker_name then
+    local detected = detect_picker()
+    if not detected then
       error("wayback: no supported picker found. Install telescope.nvim, fzf-lua, or snacks.nvim")
     end
+    picker_name = detected
   end
 
   local mod_path = picker_modules[picker_name]
@@ -59,6 +76,8 @@ local function resolve_picker()
 end
 
 function M.open(opts)
+  local visual_start, visual_end = get_visual_range()
+
   opts = opts or {}
 
   if vim.fn.executable("git") == 0 then
@@ -88,7 +107,65 @@ function M.open(opts)
     return
   end
 
+  -- Detect range: from visual mode, command range, or explicit opts
+  local line1, line2 = visual_start, visual_end
+  if not line1 and opts.range and opts.range > 0 then
+    line1 = opts.line1
+    line2 = opts.line2
+  end
+
+  if line1 and line2 then
+    local relative = git.repo_relative_path(file_path)
+    local commits = git.log_range(relative, line1, line2)
+    if #commits == 0 then
+      vim.notify("No commits found for selected range", vim.log.levels.INFO)
+      return
+    end
+    opts.commits = commits
+  end
+
   resolve_picker().open(opts, file_path)
+end
+
+function M.heatmap()
+  if vim.fn.executable("git") == 0 then
+    vim.notify("Git is not installed", vim.log.levels.ERROR)
+    return
+  end
+
+  require("wayback.heatmap").toggle()
+end
+
+function M.timelapse(opts)
+  opts = opts or {}
+
+  if vim.fn.executable("git") == 0 then
+    vim.notify("Git is not installed", vim.log.levels.ERROR)
+    return
+  end
+
+  if not git.is_git_directory() then
+    vim.notify("Not a git repository", vim.log.levels.ERROR)
+    return
+  end
+
+  local file_path = nil
+  if type(opts) == "string" then
+    file_path = opts
+  elseif opts.fargs and opts.fargs[1] then
+    file_path = opts.fargs[1]
+  end
+
+  if not file_path or file_path == "" then
+    file_path = vim.fn.expand("%:p")
+  end
+
+  if not file_path or file_path == "" then
+    vim.notify("No file in current buffer", vim.log.levels.WARN)
+    return
+  end
+
+  require("wayback.timelapse").start(file_path)
 end
 
 return M
