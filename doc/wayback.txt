@@ -34,7 +34,7 @@ HEAD. Supports multiple picker backends: telescope.nvim
 WHAT IS THE DIFFERENCE BETWEEN THIS AND BUFFER COMMITS? ~
 
 Some pickers such as Telescope include the functionality to view buffer commits
-via `:Telecope b_commits_`. This plugin differs in a few ways:
+via `:Telecope b_commits`. This plugin differs in a few ways:
 
 - **Purpose**: Opens the file at a previous version without affecting your git state. `git_bcommits` checks out the entire repo.
 - **Moved files**: Handles renamed/moved files correctly.
