@@ -13,7 +13,7 @@ Browse and open the current file at any previous commit, without detaching HEAD.
 
 ### What is the difference between this and `buffer commits`?
 
-Some pickers such as Telescope include the functionality to view buffer commits via `:Telecope b_commits_`. This plugin differs in a few ways:
+Some pickers such as Telescope include the functionality to view buffer commits via `:Telecope b_commits`. This plugin differs in a few ways:
 
 - **Purpose**: Opens the file at a previous version without affecting your git state. `git_bcommits` checks out the entire repo.
 - **Moved files**: Handles renamed/moved files correctly.
