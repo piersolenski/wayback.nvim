@@ -100,6 +100,12 @@ test("show returns old file contents", function()
   assert(content:find("line2"), "should contain original line2")
 end)
 
+test("log with empty path does not error", function()
+  local ok, result = pcall(git.log, "")
+  assert(ok, "git.log with empty path should not error")
+  assert(type(result) == "table", "should return a table")
+end)
+
 -- Cleanup
 vim.cmd("cd " .. original_dir)
 vim.fn.delete(tmp_dir, "rf")

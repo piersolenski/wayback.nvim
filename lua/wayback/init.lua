@@ -62,12 +62,12 @@ function M.open(opts)
   opts = opts or {}
 
   if vim.fn.executable("git") == 0 then
-    vim.notify("wayback: git is not installed", vim.log.levels.ERROR)
+    vim.notify("Git is not installed", vim.log.levels.ERROR)
     return
   end
 
   if not git.is_git_directory() then
-    vim.notify("wayback: not a git repository", vim.log.levels.ERROR)
+    vim.notify("Not a git repository", vim.log.levels.ERROR)
     return
   end
 
@@ -77,6 +77,15 @@ function M.open(opts)
     opts = {}
   elseif opts.fargs and opts.fargs[1] then
     file_path = opts.fargs[1]
+  end
+
+  if not file_path or file_path == "" then
+    file_path = vim.fn.expand("%:p")
+  end
+
+  if not file_path or file_path == "" then
+    vim.notify("No file in current buffer", vim.log.levels.WARN)
+    return
   end
 
   resolve_picker().open(opts, file_path)
