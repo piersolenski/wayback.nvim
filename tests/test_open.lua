@@ -14,7 +14,11 @@ end
 -- Set up a temporary git repo so we pass the git checks
 local tmp_dir = vim.fn.tempname()
 vim.fn.mkdir(tmp_dir, "p")
-vim.fn.system("cd " .. tmp_dir .. " && git init && git config user.email 'test@test.com' && git config user.name 'Test'")
+vim.fn.system(
+  "cd "
+    .. tmp_dir
+    .. " && git init && git config user.email 'test@test.com' && git config user.name 'Test'"
+)
 
 local original_dir = vim.fn.getcwd()
 vim.cmd("cd " .. tmp_dir)
@@ -81,8 +85,14 @@ test("open_buffer uses fugitive when available", function()
 
   actions.open_buffer("abc123", "test.lua", "edit")
 
-  assert(fugitive_find_arg == "abc123:test.lua", "expected FugitiveFind('abc123:test.lua'), got: " .. tostring(fugitive_find_arg))
-  assert(cmd_called and cmd_called:find("fugitive://"), "expected fugitive URI in cmd, got: " .. tostring(cmd_called))
+  assert(
+    fugitive_find_arg == "abc123:test.lua",
+    "expected FugitiveFind('abc123:test.lua'), got: " .. tostring(fugitive_find_arg)
+  )
+  assert(
+    cmd_called and cmd_called:find("fugitive://"),
+    "expected fugitive URI in cmd, got: " .. tostring(cmd_called)
+  )
 
   -- Restore
   vim.cmd = original_cmd
