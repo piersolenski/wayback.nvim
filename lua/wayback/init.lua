@@ -72,7 +72,10 @@ function M.open(opts)
   end
 
   local file_path = nil
-  if opts.fargs and opts.fargs[1] then
+  if type(opts) == "string" then
+    file_path = opts
+    opts = {}
+  elseif opts.fargs and opts.fargs[1] then
     file_path = opts.fargs[1]
   end
 
