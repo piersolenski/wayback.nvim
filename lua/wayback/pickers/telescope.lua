@@ -105,14 +105,8 @@ function M.open(opts, file_path)
           local content = git.show(entry.value, entry.path)
           vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, vim.split(content, "\n"))
 
-          local ok, pfiletype = pcall(require, "plenary.filetype")
-          if ok then
-            local ft = pfiletype.detect(entry.path, {})
-            require("telescope.previewers.utils").highlighter(self.state.bufnr, ft)
-          else
-            local ft = vim.filetype.match({ filename = entry.path }) or ""
-            vim.bo[self.state.bufnr].filetype = ft
-          end
+          local ft = vim.filetype.match({ filename = entry.path }) or ""
+          vim.bo[self.state.bufnr].filetype = ft
         end,
       }),
     })

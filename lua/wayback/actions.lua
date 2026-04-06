@@ -122,11 +122,37 @@ function M.open_in_browser(hash, path)
   end
 end
 
+--- Try to open a file at a specific commit using a fugitive object URI.
+--- @param hash string The commit hash
+--- @param path string The file path at that commit
+--- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
+--- @return boolean success Whether the file was opened via fugitive
+local valid_split_cmds = { edit = true, vsplit = true, split = true, tabedit = true }
+
+local function try_open_fugitive(hash, path, split_cmd)
+  split_cmd = valid_split_cmds[split_cmd] and split_cmd or "edit"
+  if vim.fn.exists("*FugitiveFind") ~= 1 then
+    return false
+  end
+  local ok, uri = pcall(vim.fn.FugitiveFind, hash .. ":" .. path)
+  if not ok or not uri or uri == "" then
+    return false
+  end
+  vim.cmd({ cmd = split_cmd, args = { vim.fn.fnameescape(uri) } })
+  return true
+end
+
 --- Open a file at a specific commit in a buffer.
+--- If vim-fugitive is installed, opens as a fugitive object.
+--- Otherwise, opens in a read-only scratch buffer.
 --- @param hash string The commit hash
 --- @param path string The file path at that commit
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
 function M.open_buffer(hash, path, split_cmd)
+  if try_open_fugitive(hash, path, split_cmd) then
+    return
+  end
+
   local git = require("wayback.git")
   local content = git.show(hash, path)
 

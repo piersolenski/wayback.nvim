@@ -10,6 +10,7 @@ Browse and open the current file at any previous commit, without detaching HEAD.
 - Open file at commit in your web browser (supports GitHub, GitLab, Bitbucket, Azure DevOps)
 - Copy commit hash to clipboard
 - Auto-detects your installed picker, or configure explicitly
+- Opens as [vim-fugitive](https://github.com/tpope/vim-fugitive) objects when available (enabling `:Gblame`, etc.)
 
 ### What is the difference between this and `buffer commits`?
 
@@ -26,6 +27,10 @@ Some pickers such as Telescope include the functionality to view buffer commits 
 ```lua
 {
   "piersolenski/wayback.nvim",
+  dependencies = {
+    -- Optional
+    { "tpope/vim-fugitive" },
+  },
   opts = {},
   keys = {
     {
@@ -39,7 +44,9 @@ Some pickers such as Telescope include the functionality to view buffer commits 
 }
 ```
 
-If using the Telescope backend, you may also want `nvim-lua/plenary.nvim` as a dependency for filetype detection in the previewer (falls back to `vim.filetype.match` if not available).
+#### Optional dependencies
+
+- **[vim-fugitive](https://github.com/tpope/vim-fugitive)** - When installed, files open as fugitive objects instead of read-only scratch buffers. This means you get full fugitive integration (`:Gblame`, `:Gdiffsplit`, etc.) on historical file versions.
 
 ## ⚙️ Configuration
 
@@ -126,4 +133,4 @@ The following keymaps are available from inside the picker:
 
 ## Credits
 
-Based off of the great [telescope-git-file-history.nvim](https://github.com/isak102/telescope-git-file-history.nvim) Telescope extension by [isak102](https://github.com/isak102/telescope-git-file-history.nvim).
+Based off of the [telescope-git-file-history.nvim](https://github.com/isak102/telescope-git-file-history.nvim) Telescope extension by [isak102](https://github.com/isak102/telescope-git-file-history.nvim).
