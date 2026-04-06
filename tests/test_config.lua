@@ -18,6 +18,7 @@ local function reset()
     mappings = { i = {}, n = {} },
     browser_command = nil,
     forge = nil,
+    timelapse = { next = "]v", prev = "[v", quit = "q" },
   }
 end
 
@@ -67,6 +68,21 @@ test("setup with nil opts is safe", function()
   reset()
   config.setup(nil)
   assert(config.values.picker == "auto", "picker should remain auto")
+end)
+
+test("timelapse keys have defaults", function()
+  reset()
+  assert(config.values.timelapse.next == "]v", "next should default to ]v")
+  assert(config.values.timelapse.prev == "[v", "prev should default to [v")
+  assert(config.values.timelapse.quit == "q", "quit should default to q")
+end)
+
+test("setup overrides timelapse keys", function()
+  reset()
+  config.setup({ timelapse = { next = "<C-n>", prev = "<C-p>" } })
+  assert(config.values.timelapse.next == "<C-n>", "next should be overridden")
+  assert(config.values.timelapse.prev == "<C-p>", "prev should be overridden")
+  assert(config.values.timelapse.quit == "q", "quit should remain default")
 end)
 
 print("\nAll config tests passed!")

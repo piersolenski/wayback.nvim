@@ -18,6 +18,13 @@ M.values = {
   -- Force a specific forge for browser URLs: "github", "gitlab", "bitbucket", "azure_devops"
   -- If nil, auto-detects from remote URL hostname
   forge = nil,
+
+  -- Timelapse buffer keybindings
+  timelapse = {
+    next = "]v",
+    prev = "[v",
+    quit = "q",
+  },
 }
 
 function M.setup(opts)
