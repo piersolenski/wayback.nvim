@@ -126,4 +126,4 @@ The following keymaps are available from inside the picker:
 
 ## Credits
 
-Originally created by [isak102](https://github.com/isak102/telescope-git-file-history.nvim).
+Based off of the great [telescope-git-file-history.nvim](https://github.com/isak102/telescope-git-file-history.nvim) Telescope extension by [isak102](https://github.com/isak102/telescope-git-file-history.nvim).
