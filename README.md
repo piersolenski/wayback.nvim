@@ -11,7 +11,9 @@ Browse and open the current file at any previous commit, without detaching HEAD.
 - Copy commit hash to clipboard
 - Auto-detects your installed picker, or configure explicitly
 
-### What is the difference between this and `git_bcommits`?
+### What is the difference between this and `buffer commits`?
+
+Some pickers such as Telescope include the functionality to view buffer commits via `:Telecope b_commits_`. This plugin differs in a few ways:
 
 - **Purpose**: Opens the file at a previous version without affecting your git state. `git_bcommits` checks out the entire repo.
 - **Moved files**: Handles renamed/moved files correctly.
@@ -23,15 +25,17 @@ Browse and open the current file at any previous commit, without detaching HEAD.
 
 ```lua
 {
-    "piersolenski/wayback.nvim",
-    opts = {
-        -- "auto" detects your picker (snacks > telescope > fzf_lua)
-        -- or set explicitly: "telescope", "fzf_lua", "snacks"
-        picker = "auto",
+  "piersolenski/wayback.nvim",
+  opts = {},
+  keys = {
+    {
+      "<leader>gw",
+      function()
+        require("wayback").open()
+      end,
+      desc = "Wayback",
     },
-    keys = {
-        { "<leader>gfh", "<cmd>Wayback<cr>", desc = "Wayback" },
-    },
+  },
 }
 ```
 
@@ -59,6 +63,19 @@ require("wayback").setup({
 })
 ```
 
+### Browser support
+
+The open-in-browser action auto-detects your forge from the remote URL hostname:
+
+| Forge        | Detection                                          |
+| ------------ | -------------------------------------------------- |
+| GitHub       | Default fallback                                   |
+| GitLab       | URL contains `gitlab`                              |
+| Bitbucket    | URL contains `bitbucket`                           |
+| Azure DevOps | URL contains `dev.azure.com` or `visualstudio.com` |
+
+For self-hosted instances with non-standard hostnames, set `forge` explicitly in your config.
+
 ### Telescope extension (optional)
 
 If you prefer the `:Telescope wayback` command, load the extension:
@@ -84,7 +101,8 @@ Or for a specific file:
 Or from Lua:
 
 ```lua
-require("wayback").open()
+require("wayback").open() -- current file
+require("wayback").open("path/to/file.lua") -- specific file
 ```
 
 Or via Telescope:
@@ -105,27 +123,6 @@ The following keymaps are available from inside the picker:
 | `<C-t>` | Open file at commit in new tab          |
 | `<C-g>` | Open file at commit in web browser      |
 | `<C-y>` | Copy commit hash to clipboard           |
-
-## Configuration
-
-### Full example
-
-```lua
-require("wayback").setup({})
-```
-
-### Browser support
-
-The open-in-browser action auto-detects your forge from the remote URL hostname:
-
-| Forge        | Detection                                          |
-| ------------ | -------------------------------------------------- |
-| GitHub       | Default fallback                                   |
-| GitLab       | URL contains `gitlab`                              |
-| Bitbucket    | URL contains `bitbucket`                           |
-| Azure DevOps | URL contains `dev.azure.com` or `visualstudio.com` |
-
-For self-hosted instances with non-standard hostnames, set `forge` explicitly in your config.
 
 ## Credits
 
