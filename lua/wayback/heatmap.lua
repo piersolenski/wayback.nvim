@@ -23,10 +23,17 @@ for i, color in ipairs(heatmap_colors) do
 end
 
 function M.compute_frequency(file_path, line_count)
-  local cmd = 'git --no-pager log --follow -p --pretty=format:"WAYBACK_COMMIT" -- "'
-    .. file_path
-    .. '"'
-  local content = vim.fn.system(cmd)
+  local content = vim.fn.system({
+    "git",
+    "--no-pager",
+    "log",
+    "--follow",
+    "-p",
+    "--max-count=200",
+    "--pretty=format:WAYBACK_COMMIT",
+    "--",
+    file_path,
+  })
 
   local freq = {}
   for i = 1, line_count do
@@ -53,10 +60,11 @@ end
 function M.toggle(file_path)
   local buf = vim.api.nvim_get_current_buf()
 
-  if active_buffers[buf] then
+  if active_buffers[buf] and vim.api.nvim_buf_is_valid(buf) then
     M.clear(buf)
     return
   end
+  active_buffers[buf] = nil
 
   local relative = git.repo_relative_path(file_path)
   local line_count = vim.api.nvim_buf_line_count(buf)

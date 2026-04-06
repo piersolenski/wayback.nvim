@@ -1,8 +1,17 @@
 local M = {}
 
+local toplevel_cache = nil
+
 function M.is_git_directory()
   local result = vim.fn.system("git rev-parse --is-inside-work-tree")
   return result:sub(1, 4) == "true"
+end
+
+function M.toplevel()
+  if not toplevel_cache then
+    toplevel_cache = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+$", "")
+  end
+  return toplevel_cache
 end
 
 function M._parse_log_output(content)
@@ -48,22 +57,28 @@ end
 
 function M.log(file_path)
   file_path = file_path or vim.fn.expand("%")
-  local prefix =
-    'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short '
-  local cmd = prefix .. '"' .. file_path .. '"'
-  local content = vim.fn.system(cmd)
+  local content = vim.fn.system({
+    "git",
+    "--no-pager",
+    "log",
+    "--follow",
+    "--name-status",
+    "--pretty=format:hash: %H\ndate: %ad\nmessage: %s\n",
+    "--date=short",
+    "--",
+    file_path,
+  })
   return M._parse_log_output(content)
 end
 
 function M.show(hash, path)
-  return vim.fn.system("git --no-pager show " .. hash .. ":" .. '"' .. path .. '"')
+  return vim.fn.system({ "git", "--no-pager", "show", hash .. ":" .. path })
 end
 
 function M.repo_relative_path(absolute_path)
-  local toplevel = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+$", "")
-  -- Resolve symlinks for reliable comparison
+  local tl = M.toplevel()
   local resolved_path = vim.fn.resolve(absolute_path)
-  local resolved_toplevel = vim.fn.resolve(toplevel)
+  local resolved_toplevel = vim.fn.resolve(tl)
   if resolved_path:sub(1, #resolved_toplevel) == resolved_toplevel then
     return resolved_path:sub(#resolved_toplevel + 2)
   end
@@ -71,9 +86,15 @@ function M.repo_relative_path(absolute_path)
 end
 
 function M.log_range(file_path, start_line, end_line)
-  local cmd =
-    string.format('git --no-pager log --date=short -L %d,%d:"%s"', start_line, end_line, file_path)
-  local content = vim.fn.system(cmd)
+  local range_spec = string.format("%d,%d:%s", start_line, end_line, file_path)
+  local content = vim.fn.system({
+    "git",
+    "--no-pager",
+    "log",
+    "--date=short",
+    "-L",
+    range_spec,
+  })
 
   local commits = {}
   local current = {}
@@ -102,20 +123,6 @@ function M.log_range(file_path, start_line, end_line)
   end
 
   return commits
-end
-
-function M.log_search(file_path, search_term, opts)
-  opts = opts or {}
-  local flag = opts.regex and "-G" or "-S"
-  local prefix =
-    'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short '
-  local cmd = prefix .. flag .. '"' .. search_term .. '" -- "' .. file_path .. '"'
-  local content = vim.fn.system(cmd)
-  return M._parse_log_output(content)
-end
-
-function M.head_hash()
-  return vim.fn.system("git rev-parse HEAD"):gsub("%s+$", "")
 end
 
 return M

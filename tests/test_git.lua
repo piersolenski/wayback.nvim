@@ -146,12 +146,6 @@ test("log_range commits have required fields", function()
   end
 end)
 
-test("head_hash returns a valid hash", function()
-  local hash = git.head_hash()
-  assert(hash and #hash >= 7, "hash should be at least 7 chars, got: " .. tostring(hash))
-  assert(hash:match("^%x+$"), "hash should be hex, got: " .. tostring(hash))
-end)
-
 -- Cleanup
 vim.cmd("cd " .. original_dir)
 vim.fn.delete(tmp_dir, "rf")

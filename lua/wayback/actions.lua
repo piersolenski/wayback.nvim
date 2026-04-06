@@ -211,8 +211,7 @@ function M.diff_with_current()
     return
   end
 
-  local toplevel = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+$", "")
-  local abs_path = toplevel .. "/" .. path
+  local abs_path = require("wayback.git").toplevel() .. "/" .. path
 
   if vim.fn.filereadable(abs_path) == 0 then
     vim.notify("File not found in working tree: " .. path, vim.log.levels.ERROR)
