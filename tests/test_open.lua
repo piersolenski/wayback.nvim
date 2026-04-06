@@ -62,6 +62,7 @@ test("open_buffer uses fugitive when available", function()
   -- Mock vim.fn.exists to report FugitiveFind is available
   local original_exists = vim.fn.exists
   local original_cmd = vim.cmd
+  local original_fugitive_find = vim.fn.FugitiveFind
   local fugitive_find_arg = nil
   local cmd_called = nil
 
@@ -94,7 +95,7 @@ test("open_buffer uses fugitive when available", function()
   -- Restore mocks even if test fails
   vim.cmd = original_cmd
   vim.fn.exists = original_exists
-  vim.fn.FugitiveFind = nil
+  vim.fn.FugitiveFind = original_fugitive_find
 
   if not ok then
     error(err)
