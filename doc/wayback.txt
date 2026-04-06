@@ -29,6 +29,7 @@ HEAD. Supports multiple picker backends: telescope.nvim
 - Open file at commit in your web browser (supports GitHub, GitLab, Bitbucket, Azure DevOps)
 - Copy commit hash to clipboard
 - Auto-detects your installed picker, or configure explicitly
+- Opens as vim-fugitive <https://github.com/tpope/vim-fugitive> objects when available (enabling `:Gblame`, etc.)
 
 
 WHAT IS THE DIFFERENCE BETWEEN THIS AND BUFFER COMMITS? ~
@@ -49,6 +50,10 @@ USING LAZY.NVIM ~
 >lua
     {
       "piersolenski/wayback.nvim",
+      dependencies = {
+        -- Optional
+        { "tpope/vim-fugitive" },
+      },
       opts = {},
       keys = {
         {
@@ -61,6 +66,11 @@ USING LAZY.NVIM ~
       },
     }
 <
+
+
+OPTIONAL DEPENDENCIES
+
+- **vim-fugitive** - When installed, files open as fugitive objects instead of read-only scratch buffers. This means you get full fugitive integration (`:Gblame`, `:Gdiffsplit`, etc.) on historical file versions.
 
 
 ⚙️ CONFIGURATION          *wayback-🌀-wayback.nvim-⚙️-configuration*
@@ -153,7 +163,7 @@ The following keymaps are available from inside the picker:
 
 CREDITS                                    *wayback-🌀-wayback.nvim-credits*
 
-Based off of the great telescope-git-file-history.nvim
+Based off of the telescope-git-file-history.nvim
 <https://github.com/isak102/telescope-git-file-history.nvim> Telescope
 extension by isak102
 <https://github.com/isak102/telescope-git-file-history.nvim>.
