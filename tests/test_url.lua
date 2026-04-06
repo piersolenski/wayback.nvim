@@ -67,6 +67,7 @@ local function reset()
     mappings = { i = {}, n = {} },
     browser_command = nil,
     forge = nil,
+    timelapse = { next = "]v", prev = "[v", quit = "q" },
   }
 end
 
