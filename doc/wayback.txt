@@ -62,10 +62,6 @@ USING LAZY.NVIM ~
     }
 <
 
-If using the Telescope backend, you may also want `nvim-lua/plenary.nvim` as a
-dependency for filetype detection in the previewer (falls back to
-`vim.filetype.match` if not available).
-
 
 ⚙️ CONFIGURATION          *wayback-🌀-wayback.nvim-⚙️-configuration*
 

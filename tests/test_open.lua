@@ -101,19 +101,39 @@ test("open_buffer uses fugitive when available", function()
 end)
 
 test("open_buffer falls back to scratch buffer without fugitive", function()
-  -- Ensure FugitiveFind doesn't exist (default state)
+  -- Explicitly mock fugitive as unavailable
+  local original_exists = vim.fn.exists
+  local original_fugitive_find = vim.fn.FugitiveFind
 
-  -- Create a test file and commit in the temp repo
-  vim.fn.writefile({ "hello" }, tmp_dir .. "/fallback.txt")
-  vim.fn.system("cd " .. tmp_dir .. " && git add fallback.txt && git commit -m 'add fallback'")
-  local hash = vim.fn.system("cd " .. tmp_dir .. " && git rev-parse HEAD"):gsub("%s+", "")
+  vim.fn.exists = function(expr)
+    if expr == "*FugitiveFind" then
+      return 0
+    end
+    return original_exists(expr)
+  end
+  vim.fn.FugitiveFind = nil
 
-  actions.open_buffer(hash, "fallback.txt", "edit")
+  local ok, err = pcall(function()
+    -- Create a test file and commit in the temp repo
+    vim.fn.writefile({ "hello" }, tmp_dir .. "/fallback.txt")
+    vim.fn.system("cd " .. tmp_dir .. " && git add fallback.txt && git commit -m 'add fallback'")
+    local hash = vim.fn.system("cd " .. tmp_dir .. " && git rev-parse HEAD"):gsub("%s+", "")
 
-  local buf_name = vim.api.nvim_buf_get_name(0)
-  assert(buf_name:find("wayback://"), "expected wayback:// buffer name, got: " .. buf_name)
-  assert(vim.bo.buftype == "nofile", "expected nofile buftype")
-  assert(vim.bo.readonly == true, "expected readonly buffer")
+    actions.open_buffer(hash, "fallback.txt", "edit")
+
+    local buf_name = vim.api.nvim_buf_get_name(0)
+    assert(buf_name:find("wayback://"), "expected wayback:// buffer name, got: " .. buf_name)
+    assert(vim.bo.buftype == "nofile", "expected nofile buftype")
+    assert(vim.bo.readonly == true, "expected readonly buffer")
+  end)
+
+  -- Restore mocks even if test fails
+  vim.fn.exists = original_exists
+  vim.fn.FugitiveFind = original_fugitive_find
+
+  if not ok then
+    error(err)
+  end
 end)
 
 -- Restore

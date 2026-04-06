@@ -128,6 +128,7 @@ end
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
 --- @return boolean success Whether the file was opened via fugitive
 local function try_open_fugitive(hash, path, split_cmd)
+  split_cmd = split_cmd or "edit"
   if vim.fn.exists("*FugitiveFind") ~= 1 then
     return false
   end
