@@ -1,19 +1,18 @@
 # 🌀 wayback.nvim
 
-Browse and open the current file at any previous commit, without detaching HEAD. Supports multiple picker backends: [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), [fzf-lua](https://github.com/ibhagwan/fzf-lua), and [snacks.nvim](https://github.com/folke/snacks.nvim).
+A git time machine for Neovim. Browse file history, view change heatmaps, and step through versions - all without detaching HEAD.
 
 ## ✨ Features
 
-- Open file at any commit in current buffer, split, vsplit, or tab
-- Preview file contents at the selected commit
-- Handles file renames/moves via `git log --follow`
-- Open file at commit in your web browser (supports GitHub, GitLab, Bitbucket, Azure DevOps)
-- Copy commit hash to clipboard
-- Auto-detects your installed picker, or configure explicitly
-- Opens as [vim-fugitive](https://github.com/tpope/vim-fugitive) objects when available (enabling `:Gblame`, etc.)
-- **Line-range history** - visual-select lines and see only commits that touched them
-- **Change frequency heatmap** - background color overlay showing how often each line region changes
-- **File time-lapse** - step through file versions chronologically with keybindings
+- Browse and open any file at any previous commit in a buffer, split, or tab
+- Visual-select lines to filter history to only commits that touched those lines
+- Open file at commit in your web browser (GitHub, GitLab, Bitbucket, Azure DevOps)
+- Change frequency heatmap with a blue-to-red background gradient
+- Time-lapse mode to step through file versions with keybindings
+- Preview file contents at each commit inside the picker
+- Tracks file renames and moves via `git log --follow`
+- Opens as [vim-fugitive](https://github.com/tpope/vim-fugitive) objects when available
+- Supports [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), [fzf-lua](https://github.com/ibhagwan/fzf-lua), and [snacks.nvim](https://github.com/folke/snacks.nvim) pickers
 
 ### What is the difference between this and `buffer commits`?
 
