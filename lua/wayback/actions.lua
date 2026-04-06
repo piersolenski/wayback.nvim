@@ -197,4 +197,36 @@ function M.yank_hash(hash)
   vim.notify("Copied " .. hash:sub(1, 7))
 end
 
+--- Diff current wayback buffer with the working tree version.
+function M.diff_with_current()
+  local buf_name = vim.api.nvim_buf_get_name(0)
+
+  local path = buf_name:match("^wayback://[^/]+/(.+)$")
+  if not path then
+    path = buf_name:match("^fugitive://.-//.-:(.+)$")
+  end
+
+  if not path then
+    vim.notify("Not a wayback buffer", vim.log.levels.WARN)
+    return
+  end
+
+  local toplevel = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+$", "")
+  local abs_path = toplevel .. "/" .. path
+
+  if vim.fn.filereadable(abs_path) == 0 then
+    vim.notify("File not found in working tree: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
+  vim.cmd("diffthis")
+  vim.cmd("vsplit " .. vim.fn.fnameescape(abs_path))
+  vim.cmd("diffthis")
+end
+
+--- Turn off diff mode in all windows of current tab.
+function M.diff_off()
+  vim.cmd("diffoff!")
+end
+
 return M
