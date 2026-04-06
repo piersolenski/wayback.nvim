@@ -18,7 +18,7 @@ local function update_display(state)
   local total = #state.commits
   local info = string.format(
     "[%d/%d] %s %s - %s",
-    total - state.index + 1,
+    state.index,
     total,
     string.sub(commit.hash, 1, 7),
     commit.date or "",

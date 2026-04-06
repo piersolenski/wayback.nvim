@@ -59,8 +59,9 @@ end
 
 function M.setup(opts)
   opts = opts or {}
-  M.values = vim.tbl_deep_extend("force", M.values, opts)
-  validate(M.values)
+  local values = vim.tbl_deep_extend("force", M.values, opts)
+  validate(values)
+  M.values = values
 end
 
 return M
