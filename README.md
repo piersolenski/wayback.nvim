@@ -46,7 +46,6 @@ Some pickers such as Telescope include the functionality to view buffer commits 
 
 #### Optional dependencies
 
-- **[nvim-lua/plenary.nvim](https://github.com/nvim-lua/plenary.nvim)** - Improved filetype detection in the Telescope previewer (falls back to `vim.filetype.match` if not available).
 - **[vim-fugitive](https://github.com/tpope/vim-fugitive)** - When installed, files open as fugitive objects instead of read-only scratch buffers. This means you get full fugitive integration (`:Gblame`, `:Gdiffsplit`, etc.) on historical file versions.
 
 ## ⚙️ Configuration
