@@ -1,0 +1,20 @@
+name: Generate Vimdoc
+
+on:
+  push:
+    branches: [main]
+    paths: [README.md]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: kdheepak/panvimdoc@main
+        with:
+          vimdoc: wayback
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-generate vimdoc"

@@ -1,0 +1,21 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.lua", "tests/**"]
+  pull_request:
+    branches: [main]
+    paths: ["**/*.lua", "tests/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+      - run: chmod +x tests/run.sh && tests/run.sh

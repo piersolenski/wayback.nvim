@@ -1,0 +1,19 @@
+name: StyLua Check
+
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.lua", ".stylua.toml"]
+  pull_request:
+    branches: [main]
+    paths: ["**/*.lua", ".stylua.toml"]
+
+jobs:
+  stylua:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --check .
