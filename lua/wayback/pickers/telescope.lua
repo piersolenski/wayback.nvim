@@ -35,7 +35,7 @@ function M.open(opts, file_path)
             value = entry.hash,
             display = function()
               return displayer({
-                { entry.date, "TelescopeResultsConstant" },
+                { entry.date, "WaybackDate" },
                 { string.sub(entry.hash, 1, 7), "TelescopeResultsIdentifier" },
                 entry.message,
               })

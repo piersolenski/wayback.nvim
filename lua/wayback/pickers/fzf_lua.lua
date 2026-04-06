@@ -22,7 +22,7 @@ function M.open(opts, file_path)
     local short_hash = string.sub(commit.hash, 1, 7)
     local display = string.format(
       "%s %s %s",
-      fzf_lua.utils.ansi_codes.yellow(commit.date),
+      fzf_lua.utils.ansi_codes.cyan(commit.date),
       fzf_lua.utils.ansi_codes.green(short_hash),
       commit.message or ""
     )

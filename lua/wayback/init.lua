@@ -5,6 +5,8 @@ local M = {}
 
 M.actions = require("wayback.actions")
 
+vim.api.nvim_set_hl(0, "WaybackDate", { default = true, link = "Number" })
+
 function M.setup(opts)
   config.setup(opts)
 end

@@ -27,7 +27,7 @@ function M.open(opts, file_path)
     items = items,
     format = function(item, _ctx)
       local ret = {}
-      table.insert(ret, { item.date .. " ", "SnacksPickerDimmed" })
+      table.insert(ret, { item.date .. " ", "WaybackDate" })
       table.insert(ret, { string.sub(item.hash, 1, 7) .. " ", "SnacksPickerSpecial" })
       table.insert(ret, { item.message })
       return ret
