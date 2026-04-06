@@ -1,17 +1,18 @@
 local M = {}
 
-local toplevel_cache = nil
+local toplevel_cache = {}
 
 function M.is_git_directory()
-  local result = vim.fn.system("git rev-parse --is-inside-work-tree")
+  local result = vim.fn.system({ "git", "rev-parse", "--is-inside-work-tree" })
   return result:sub(1, 4) == "true"
 end
 
 function M.toplevel()
-  if not toplevel_cache then
-    toplevel_cache = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+$", "")
+  local cwd = vim.fn.getcwd()
+  if not toplevel_cache[cwd] then
+    toplevel_cache[cwd] = vim.fn.system({ "git", "rev-parse", "--show-toplevel" }):gsub("%s+$", "")
   end
-  return toplevel_cache
+  return toplevel_cache[cwd]
 end
 
 function M._parse_log_output(content)
@@ -79,7 +80,14 @@ function M.repo_relative_path(absolute_path)
   local tl = M.toplevel()
   local resolved_path = vim.fn.resolve(absolute_path)
   local resolved_toplevel = vim.fn.resolve(tl)
-  if resolved_path:sub(1, #resolved_toplevel) == resolved_toplevel then
+  if resolved_path == resolved_toplevel then
+    return ""
+  end
+  local sep = package.config:sub(1, 1)
+  if
+    resolved_path:sub(1, #resolved_toplevel) == resolved_toplevel
+    and resolved_path:sub(#resolved_toplevel + 1, #resolved_toplevel + 1) == sep
+  then
     return resolved_path:sub(#resolved_toplevel + 2)
   end
   return absolute_path
