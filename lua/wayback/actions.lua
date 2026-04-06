@@ -122,14 +122,21 @@ function M.open_in_browser(hash, path)
   end
 end
 
---- Open a file at a specific commit using a fugitive object URI.
---- Requires vim-fugitive to be installed.
+--- Try to open a file at a specific commit using a fugitive object URI.
 --- @param hash string The commit hash
 --- @param path string The file path at that commit
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
-local function open_fugitive(hash, path, split_cmd)
-  local uri = vim.fn.FugitiveFind(hash .. ":" .. path)
+--- @return boolean success Whether the file was opened via fugitive
+local function try_open_fugitive(hash, path, split_cmd)
+  if vim.fn.exists("*FugitiveFind") ~= 1 then
+    return false
+  end
+  local ok, uri = pcall(vim.fn.FugitiveFind, hash .. ":" .. path)
+  if not ok or not uri or uri == "" then
+    return false
+  end
   vim.cmd(split_cmd .. " " .. vim.fn.fnameescape(uri))
+  return true
 end
 
 --- Open a file at a specific commit in a buffer.
@@ -139,8 +146,7 @@ end
 --- @param path string The file path at that commit
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
 function M.open_buffer(hash, path, split_cmd)
-  if vim.g.loaded_fugitive then
-    open_fugitive(hash, path, split_cmd)
+  if try_open_fugitive(hash, path, split_cmd) then
     return
   end
 

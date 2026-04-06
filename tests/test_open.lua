@@ -57,8 +57,14 @@ end)
 local actions = require("wayback.actions")
 
 test("open_buffer uses fugitive when available", function()
-  -- Mock fugitive
-  vim.g.loaded_fugitive = 1
+  -- Mock vim.fn.exists to report FugitiveFind is available
+  local original_exists = vim.fn.exists
+  vim.fn.exists = function(name)
+    if name == "*FugitiveFind" then
+      return 1
+    end
+    return original_exists(name)
+  end
 
   local fugitive_find_arg = nil
   vim.fn.FugitiveFind = function(arg)
@@ -80,12 +86,12 @@ test("open_buffer uses fugitive when available", function()
 
   -- Restore
   vim.cmd = original_cmd
-  vim.g.loaded_fugitive = nil
+  vim.fn.exists = original_exists
   vim.fn.FugitiveFind = nil
 end)
 
 test("open_buffer falls back to scratch buffer without fugitive", function()
-  vim.g.loaded_fugitive = nil
+  -- Ensure FugitiveFind doesn't exist (default state)
 
   -- Create a test file and commit in the temp repo
   vim.fn.writefile({ "hello" }, tmp_dir .. "/fallback.txt")
