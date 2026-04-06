@@ -50,22 +50,11 @@ function M.compute_frequency(file_path, line_count)
   return freq
 end
 
-function M.toggle()
+function M.toggle(file_path)
   local buf = vim.api.nvim_get_current_buf()
 
   if active_buffers[buf] then
     M.clear(buf)
-    return
-  end
-
-  local file_path = vim.fn.expand("%:p")
-  if not file_path or file_path == "" then
-    vim.notify("No file in current buffer", vim.log.levels.WARN)
-    return
-  end
-
-  if not git.is_git_directory() then
-    vim.notify("Not a git repository", vim.log.levels.ERROR)
     return
   end
 

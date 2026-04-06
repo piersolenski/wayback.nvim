@@ -27,6 +27,31 @@ function M.setup(opts)
   config.setup(opts)
 end
 
+local function validate(opts)
+  if vim.fn.executable("git") == 0 then
+    vim.notify("Git is not installed", vim.log.levels.ERROR)
+    return nil
+  end
+  if not git.is_git_directory() then
+    vim.notify("Not a git repository", vim.log.levels.ERROR)
+    return nil
+  end
+  local file_path = nil
+  if type(opts) == "string" then
+    file_path = opts
+  elseif opts and opts.fargs and opts.fargs[1] then
+    file_path = opts.fargs[1]
+  end
+  if not file_path or file_path == "" then
+    file_path = vim.fn.expand("%:p")
+  end
+  if not file_path or file_path == "" then
+    vim.notify("No file in current buffer", vim.log.levels.WARN)
+    return nil
+  end
+  return file_path
+end
+
 local picker_modules = {
   telescope = "wayback.pickers.telescope",
   fzf_lua = "wayback.pickers.fzf_lua",
@@ -78,33 +103,12 @@ end
 function M.open(opts)
   local visual_start, visual_end = get_visual_range()
 
-  opts = opts or {}
-
-  if vim.fn.executable("git") == 0 then
-    vim.notify("Git is not installed", vim.log.levels.ERROR)
+  local file_path = validate(opts)
+  if not file_path then
     return
   end
-
-  if not git.is_git_directory() then
-    vim.notify("Not a git repository", vim.log.levels.ERROR)
-    return
-  end
-
-  local file_path = nil
-  if type(opts) == "string" then
-    file_path = opts
+  if type(opts) ~= "table" then
     opts = {}
-  elseif opts.fargs and opts.fargs[1] then
-    file_path = opts.fargs[1]
-  end
-
-  if not file_path or file_path == "" then
-    file_path = vim.fn.expand("%:p")
-  end
-
-  if not file_path or file_path == "" then
-    vim.notify("No file in current buffer", vim.log.levels.WARN)
-    return
   end
 
   -- Detect range: from visual mode, command range, or explicit opts
@@ -128,43 +132,18 @@ function M.open(opts)
 end
 
 function M.heatmap()
-  if vim.fn.executable("git") == 0 then
-    vim.notify("Git is not installed", vim.log.levels.ERROR)
+  local file_path = validate()
+  if not file_path then
     return
   end
-
-  require("wayback.heatmap").toggle()
+  require("wayback.heatmap").toggle(file_path)
 end
 
 function M.timelapse(opts)
-  opts = opts or {}
-
-  if vim.fn.executable("git") == 0 then
-    vim.notify("Git is not installed", vim.log.levels.ERROR)
+  local file_path = validate(opts)
+  if not file_path then
     return
   end
-
-  if not git.is_git_directory() then
-    vim.notify("Not a git repository", vim.log.levels.ERROR)
-    return
-  end
-
-  local file_path = nil
-  if type(opts) == "string" then
-    file_path = opts
-  elseif opts.fargs and opts.fargs[1] then
-    file_path = opts.fargs[1]
-  end
-
-  if not file_path or file_path == "" then
-    file_path = vim.fn.expand("%:p")
-  end
-
-  if not file_path or file_path == "" then
-    vim.notify("No file in current buffer", vim.log.levels.WARN)
-    return
-  end
-
   require("wayback.timelapse").start(file_path)
 end
 

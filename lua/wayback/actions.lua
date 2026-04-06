@@ -194,7 +194,7 @@ end
 --- @param hash string The commit hash
 function M.yank_hash(hash)
   vim.fn.setreg("+", hash)
-  vim.notify("Copied " .. hash:sub(1, 7))
+  vim.notify("Copied " .. hash:sub(1, 7), vim.log.levels.INFO)
 end
 
 --- Diff current wayback buffer with the working tree version.
