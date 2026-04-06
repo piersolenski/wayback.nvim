@@ -127,8 +127,10 @@ end
 --- @param path string The file path at that commit
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
 --- @return boolean success Whether the file was opened via fugitive
+local valid_split_cmds = { edit = true, vsplit = true, split = true, tabedit = true }
+
 local function try_open_fugitive(hash, path, split_cmd)
-  split_cmd = split_cmd or "edit"
+  split_cmd = valid_split_cmds[split_cmd] and split_cmd or "edit"
   if vim.fn.exists("*FugitiveFind") ~= 1 then
     return false
   end
@@ -136,7 +138,7 @@ local function try_open_fugitive(hash, path, split_cmd)
   if not ok or not uri or uri == "" then
     return false
   end
-  vim.cmd(split_cmd .. " " .. vim.fn.fnameescape(uri))
+  vim.cmd({ cmd = split_cmd, args = { vim.fn.fnameescape(uri) } })
   return true
 end
 
