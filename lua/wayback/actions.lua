@@ -128,8 +128,7 @@ end
 --- @param path string The file path at that commit
 --- @param split_cmd string How to open: "edit", "vsplit", "split", or "tabedit"
 local function open_fugitive(hash, path, split_cmd)
-  local git_dir = vim.fn.FugitiveGitDir()
-  local uri = "fugitive://" .. git_dir .. "//" .. hash .. ":" .. path
+  local uri = vim.fn.FugitiveFind(hash .. ":" .. path)
   vim.cmd(split_cmd .. " " .. vim.fn.fnameescape(uri))
 end
 
