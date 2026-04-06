@@ -194,15 +194,6 @@ Inside the timelapse buffer (configurable via `timelapse` in setup):
 
 A virtual text header shows the current position, commit hash, date, and message.
 
-### Wayback diff
-
-When viewing a historical file version (wayback buffer), diff it against the current working tree version:
-
-```vim
-:WaybackDiff
-:WaybackDiffOff
-```
-
 ## ⌨️ Keymaps
 
 The following keymaps are available from inside the picker:

@@ -183,6 +183,7 @@ function M.open_buffer(hash, path, split_cmd)
   vim.bo[buf].readonly = true
   vim.bo[buf].buftype = "nofile"
   vim.bo[buf].bufhidden = "wipe"
+  vim.b[buf].wayback_path = path
 
   local ft = vim.filetype.match({ filename = path, buf = buf })
   if ft then
@@ -195,37 +196,6 @@ end
 function M.yank_hash(hash)
   vim.fn.setreg("+", hash)
   vim.notify("Copied " .. hash:sub(1, 7), vim.log.levels.INFO)
-end
-
---- Diff current wayback buffer with the working tree version.
-function M.diff_with_current()
-  local buf_name = vim.api.nvim_buf_get_name(0)
-
-  local path = buf_name:match("^wayback://[^/]+/(.+)$")
-  if not path then
-    path = buf_name:match("^fugitive://.-//.-:(.+)$")
-  end
-
-  if not path then
-    vim.notify("Not a wayback buffer", vim.log.levels.WARN)
-    return
-  end
-
-  local abs_path = require("wayback.git").toplevel() .. "/" .. path
-
-  if vim.fn.filereadable(abs_path) == 0 then
-    vim.notify("File not found in working tree: " .. path, vim.log.levels.ERROR)
-    return
-  end
-
-  vim.cmd("diffthis")
-  vim.cmd("vsplit " .. vim.fn.fnameescape(abs_path))
-  vim.cmd("diffthis")
-end
-
---- Turn off diff mode in all windows of current tab.
-function M.diff_off()
-  vim.cmd("diffoff!")
 end
 
 return M
