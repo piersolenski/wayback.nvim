@@ -18,6 +18,7 @@ local function reset()
     mappings = { i = {}, n = {} },
     browser_command = nil,
     forge = nil,
+    timelapse = { next = "]v", prev = "[v", quit = "q" },
   }
 end
 
@@ -67,6 +68,63 @@ test("setup with nil opts is safe", function()
   reset()
   config.setup(nil)
   assert(config.values.picker == "auto", "picker should remain auto")
+end)
+
+test("timelapse keys have defaults", function()
+  reset()
+  assert(config.values.timelapse.next == "]v", "next should default to ]v")
+  assert(config.values.timelapse.prev == "[v", "prev should default to [v")
+  assert(config.values.timelapse.quit == "q", "quit should default to q")
+end)
+
+test("setup overrides timelapse keys", function()
+  reset()
+  config.setup({ timelapse = { next = "<C-n>", prev = "<C-p>" } })
+  assert(config.values.timelapse.next == "<C-n>", "next should be overridden")
+  assert(config.values.timelapse.prev == "<C-p>", "prev should be overridden")
+  assert(config.values.timelapse.quit == "q", "quit should remain default")
+end)
+
+test("setup rejects invalid picker", function()
+  reset()
+  local ok = pcall(config.setup, { picker = "invalid" })
+  assert(not ok, "should reject invalid picker")
+end)
+
+test("setup rejects invalid forge", function()
+  reset()
+  local ok = pcall(config.setup, { forge = 123 })
+  assert(not ok, "should reject non-string forge")
+end)
+
+test("setup rejects invalid forge value", function()
+  reset()
+  local ok = pcall(config.setup, { forge = "gitea" })
+  assert(not ok, "should reject unknown forge")
+end)
+
+test("setup rejects non-string timelapse key", function()
+  reset()
+  local ok = pcall(config.setup, { timelapse = { next = 123 } })
+  assert(not ok, "should reject non-string timelapse key")
+end)
+
+test("setup rejects non-string browser_command", function()
+  reset()
+  local ok = pcall(config.setup, { browser_command = true })
+  assert(not ok, "should reject non-string browser_command")
+end)
+
+test("setup accepts valid forge", function()
+  reset()
+  config.setup({ forge = "gitlab" })
+  assert(config.values.forge == "gitlab", "should accept gitlab")
+end)
+
+test("setup accepts nil forge", function()
+  reset()
+  config.setup({ forge = nil })
+  assert(config.values.forge == nil, "should accept nil forge")
 end)
 
 print("\nAll config tests passed!")

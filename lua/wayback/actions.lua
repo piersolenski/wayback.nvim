@@ -183,7 +183,6 @@ function M.open_buffer(hash, path, split_cmd)
   vim.bo[buf].readonly = true
   vim.bo[buf].buftype = "nofile"
   vim.bo[buf].bufhidden = "wipe"
-
   local ft = vim.filetype.match({ filename = path, buf = buf })
   if ft then
     vim.bo[buf].filetype = ft
@@ -194,7 +193,7 @@ end
 --- @param hash string The commit hash
 function M.yank_hash(hash)
   vim.fn.setreg("+", hash)
-  vim.notify("Copied " .. hash:sub(1, 7))
+  vim.notify("Copied " .. hash:sub(1, 7), vim.log.levels.INFO)
 end
 
 return M

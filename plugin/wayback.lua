@@ -1,3 +1,11 @@
 vim.api.nvim_create_user_command("Wayback", function(opts)
   require("wayback").open(opts)
-end, { nargs = "?", complete = "file", desc = "Browse file history at any commit" })
+end, { nargs = "?", range = true, complete = "file", desc = "Browse file history at any commit" })
+
+vim.api.nvim_create_user_command("WaybackHeatmap", function()
+  require("wayback").heatmap()
+end, { desc = "Toggle change frequency heatmap" })
+
+vim.api.nvim_create_user_command("WaybackTimelapse", function(opts)
+  require("wayback").timelapse(opts)
+end, { nargs = "?", complete = "file", desc = "Step through file versions" })

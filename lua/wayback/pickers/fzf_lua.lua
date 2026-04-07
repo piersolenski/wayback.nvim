@@ -15,7 +15,7 @@ function M.open(opts, file_path)
 
   opts = opts or {}
 
-  local commits = git.log(file_path)
+  local commits = opts.commits or git.log(file_path)
   local entries = {}
 
   for _, commit in ipairs(commits) do

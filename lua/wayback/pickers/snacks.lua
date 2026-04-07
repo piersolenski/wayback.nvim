@@ -3,10 +3,11 @@ local actions_mod = require("wayback.actions")
 
 local M = {}
 
-function M.open(_opts, file_path)
+function M.open(opts, file_path)
   local Snacks = require("snacks")
 
-  local commits = git.log(file_path)
+  opts = opts or {}
+  local commits = opts.commits or git.log(file_path)
   local items = {}
 
   for idx, commit in ipairs(commits) do

@@ -1,16 +1,18 @@
 # 🌀 wayback.nvim
 
-Browse and open the current file at any previous commit, without detaching HEAD. Supports multiple picker backends: [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), [fzf-lua](https://github.com/ibhagwan/fzf-lua), and [snacks.nvim](https://github.com/folke/snacks.nvim).
+A git time machine for Neovim. Browse file history, view change heatmaps, and step through versions - all without detaching HEAD.
 
 ## ✨ Features
 
-- Open file at any commit in current buffer, split, vsplit, or tab
-- Preview file contents at the selected commit
-- Handles file renames/moves via `git log --follow`
-- Open file at commit in your web browser (supports GitHub, GitLab, Bitbucket, Azure DevOps)
-- Copy commit hash to clipboard
-- Auto-detects your installed picker, or configure explicitly
-- Opens as [vim-fugitive](https://github.com/tpope/vim-fugitive) objects when available (enabling `:Gblame`, etc.)
+- Browse and open any file at any previous commit in a buffer, split, or tab
+- Visual-select lines to filter history to only commits that touched those lines
+- Open file at commit in your web browser (GitHub, GitLab, Bitbucket, Azure DevOps)
+- Change frequency heatmap with a blue-to-red background gradient
+- Time-lapse mode to step through file versions with keybindings
+- Preview file contents at each commit inside the picker
+- Tracks file renames and moves via `git log --follow`
+- Opens as [vim-fugitive](https://github.com/tpope/vim-fugitive) objects when available
+- Supports [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), [fzf-lua](https://github.com/ibhagwan/fzf-lua), and [snacks.nvim](https://github.com/folke/snacks.nvim) pickers
 
 ### What is the difference between this and `buffer commits`?
 
@@ -38,7 +40,22 @@ Some pickers such as Telescope include the functionality to view buffer commits 
       function()
         require("wayback").open()
       end,
+      mode = { "n", "x" },
       desc = "Wayback",
+    },
+    {
+      "<leader>gh",
+      function()
+        require("wayback").heatmap()
+      end,
+      desc = "Wayback heatmap",
+    },
+    {
+      "<leader>gt",
+      function()
+        require("wayback").timelapse()
+      end,
+      desc = "Wayback timelapse",
     },
   },
 }
@@ -66,6 +83,13 @@ require("wayback").setup({
   mappings = {
     i = {},
     n = {},
+  },
+
+  -- Timelapse buffer keybindings
+  timelapse = {
+    next = "]v",
+    prev = "[v",
+    quit = "q",
   },
 })
 ```
@@ -118,6 +142,57 @@ Or via Telescope:
 :Telescope wayback
 ```
 
+### Line-range history
+
+Visual-select lines, then invoke wayback to see only commits that touched those lines:
+
+```lua
+-- From a visual selection keymap:
+require("wayback").open()
+```
+
+```vim
+:'<,'>Wayback
+```
+
+> **Note**: Line-range history does not track file renames since `git log -L` does not support `--follow`.
+
+### Change frequency heatmap
+
+Toggle a background color overlay showing how frequently each line region has been changed:
+
+```lua
+require("wayback").heatmap()
+```
+
+```vim
+:WaybackHeatmap
+```
+
+Lines range from cool blue (rarely changed) to hot red (frequently changed). Call again to toggle off. Highlight groups `WaybackHeat1` through `WaybackHeat10` can be overridden in your colorscheme.
+
+### File time-lapse
+
+Step through every version of the file. Timelapse opens on the latest version; navigate backward and forward through history:
+
+```lua
+require("wayback").timelapse()
+```
+
+```vim
+:WaybackTimelapse
+```
+
+Inside the timelapse buffer (configurable via `timelapse` in setup):
+
+| Keymap (default) | Action         |
+| ---------------- | -------------- |
+| `]v`             | Newer version  |
+| `[v`             | Older version  |
+| `q`              | Exit timelapse |
+
+A virtual text header shows the current position, commit hash, date, and message.
+
 ## ⌨️ Keymaps
 
 The following keymaps are available from inside the picker:
@@ -134,3 +209,17 @@ The following keymaps are available from inside the picker:
 ## Credits
 
 Based off of the [telescope-git-file-history.nvim](https://github.com/isak102/telescope-git-file-history.nvim) Telescope extension by [isak102](https://github.com/isak102/telescope-git-file-history.nvim).
+
+## 🤓 About the author
+
+As well as a passionate Vim enthusiast, I am a Full Stack Developer and Technical Lead from London, UK.
+
+Whether it's to discuss a project, talk shop or just say hi, I'd love to hear from you!
+
+- [Website](https://www.piersolenski.com/)
+- [CodePen](https://codepen.io/piers)
+- [LinkedIn](https://www.linkedin.com/in/piersolenski/)
+
+<a href='https://ko-fi.com/piersolenski' target='_blank'>
+  <img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+</a>

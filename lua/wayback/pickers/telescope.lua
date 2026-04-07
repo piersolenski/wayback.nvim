@@ -20,7 +20,7 @@ function M.open(opts, file_path)
     .new(opts, {
       results_title = "Commits for current file",
       finder = finders.new_table({
-        results = git.log(file_path),
+        results = opts.commits or git.log(file_path),
         entry_maker = function(entry)
           local displayer = entry_display.create({
             separator = " ",
