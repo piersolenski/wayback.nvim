@@ -183,8 +183,6 @@ function M.open_buffer(hash, path, split_cmd)
   vim.bo[buf].readonly = true
   vim.bo[buf].buftype = "nofile"
   vim.bo[buf].bufhidden = "wipe"
-  vim.b[buf].wayback_path = path
-
   local ft = vim.filetype.match({ filename = path, buf = buf })
   if ft then
     vim.bo[buf].filetype = ft
